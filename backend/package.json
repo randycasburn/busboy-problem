@@ -1,0 +1,17 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "This application showcases an issue where Busboy does not reliably parse a file from FormData()",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "Mihkel Pajunen",
+  "license": "ISC",
+  "dependencies": {
+    "busboy": "^1.0.0",
+    "express": "^4.17.2",
+    "nodemon": "^2.0.15",
+    "uuid": "^8.3.2"
+  }
+}

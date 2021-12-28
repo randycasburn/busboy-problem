@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>File Uploader</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" />
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.24.0/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div class="mx-auto" style="max-width: 600px">
+        <form @submit.prevent="submitForm" class="p-4">
+          <div class="box">
+            <div class="level">
+              <div class="level-item">
+                <h1 class="title is-size-4">Upload Track</h1>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">File</label>
+              <div class="file has-name is-fullwidth">
+                <label class="file-label">
+                  <input @change="attachFile" class="file-input" type="file" name="track" accept="audio/*" required />
+                  <span class="file-cta">
+                    <span class="file-icon">
+                      <i class="fas fa-upload"></i>
+                    </span>
+                    <span class="file-label">Browse</span>
+                  </span>
+                  <span class="file-name">{{ fileName }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="level">
+                <div class="level-item">
+                  <button class="button is-primary mt-2" type="submit">Upload</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div v-if="showError" class="notification is-warning m-4">
+          <div class="level">
+            <div class="level-item">
+              <p>This website only supports <strong>.flac</strong> files.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      Vue.createApp({
+        data() {
+          return {
+            file: null,
+            showError: false
+          };
+        },
+        computed: {
+          fileName() {
+            return this.file ? this.file.name : '';
+          }
+        },
+        methods: {
+          attachFile(event) {
+            this.file = event.target.files[0];
+          },
+          formIsValid() {
+            if (this.file.type !== 'audio/flac' && this.file.type !== 'audio/x-flac') {
+              this.showError = true;
+
+              setTimeout(() => {
+                this.showError = false;
+              }, 5000);
+
+              this.file = null;
+              return false;
+            }
+
+            return true;
+          },
+          async submitForm() {
+            if (this.formIsValid()) {
+              const formData = new FormData();
+              formData.append('file', this.file, this.file.name);
+
+              try {
+                const response = await axios.post('http://localhost:3000/upload', formData);
+                console.log(response);
+              } catch (error) {
+                console.log(error);
+              }
+            }
+          }
+        }
+      }).mount('#app');
+    </script>
+  </body>
+</html>
